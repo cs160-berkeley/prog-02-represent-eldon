@@ -13,20 +13,17 @@ class CongressPerson {
     private String email;
     private String party;
     private String lastTweet;
+    private String prefix;
     private int photoId;
 
-    CongressPerson(String name, URL url, int photoId) {
-        this.name = name;
-        this.siteURL = url;
-        this.photoId = photoId;
-    }
-
-    CongressPerson(String name,
+    CongressPerson(String prefix,
+                   String name,
                    URL url,
                    String email,
                    String party,
                    String lastTweet,
                    int photoId) {
+        this.prefix = prefix;
         this.name = name;
         this.siteURL = url;
         this.email = email;
