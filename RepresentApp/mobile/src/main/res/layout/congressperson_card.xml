@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/congressperson_cardview"
+    android:layout_marginBottom="6dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+
+        >
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/person_photo"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="16dp"
+            android:maxHeight="@dimen/max_card_height"
+            android:src="@drawable/boxer"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/person_name"
+            android:layout_toRightOf="@+id/person_photo"
+            android:layout_alignParentTop="true"
+            android:textSize="20sp"
+            android:text="Barbara Boxer" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/person_party"
+            android:layout_toRightOf="@+id/person_photo"
+            android:layout_below="@id/person_name"
+            android:text="Democrat"
+            android:layout_marginTop="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/person_website"
+            android:layout_toRightOf="@+id/person_photo"
+            android:layout_below="@+id/person_party"
+            android:text="boxer.senate.gov"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/person_email"
+            android:layout_toRightOf="@+id/person_photo"
+            android:layout_below="@+id/person_website"
+            android:text="Email"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/person_last_tweet"
+            android:layout_below="@+id/person_photo"
+            android:text="\@senatorBoxer Putting the country first means Obama [...]"
+            android:layout_marginTop="6dp"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
