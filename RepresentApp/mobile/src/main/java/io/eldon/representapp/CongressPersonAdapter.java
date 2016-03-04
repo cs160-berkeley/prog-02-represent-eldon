@@ -1,5 +1,6 @@
 package io.eldon.representapp;
 
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ public class CongressPersonAdapter extends RecyclerView.Adapter<CongressPersonAd
 
         CongressPersonViewHolder(View itemView) {
             super(itemView);
+
             cv = (CardView)itemView.findViewById(R.id.congressperson_cardview);
             personName = (TextView)itemView.findViewById(R.id.person_name);
             personWebsite = (TextView)itemView.findViewById(R.id.person_website);
@@ -48,17 +50,25 @@ public class CongressPersonAdapter extends RecyclerView.Adapter<CongressPersonAd
     @Override
     public CongressPersonViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.congressperson_card, viewGroup, false);
-        CongressPersonViewHolder pvh = new CongressPersonViewHolder(v);
-        return pvh;
+        return new CongressPersonViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(CongressPersonViewHolder congressPersonViewHolder, int i) {
+        final int j = i; // to avoid a stupid java error
         congressPersonViewHolder.personName.setText(persons.get(i).getName());
         congressPersonViewHolder.personWebsite.setText(persons.get(i).getWebsite());
         congressPersonViewHolder.personEmail.setText(persons.get(i).getEmail());
         congressPersonViewHolder.personLastTweet.setText(persons.get(i).getTruncatedLastTweet());
         congressPersonViewHolder.personPhoto.setImageResource(persons.get(i).getPhotoID());
+        congressPersonViewHolder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent getDetailIntent = new Intent(v.getContext(), DetailActivity.class);
+                getDetailIntent.putExtra("congressperson", persons.get(j));
+                v.getContext().startActivity(getDetailIntent);
+            }
+        });
     }
 
     @Override

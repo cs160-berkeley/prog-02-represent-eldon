@@ -1,19 +1,28 @@
 package io.eldon.representapp;
 
+import android.text.TextUtils;
+
+import java.io.Serializable;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by eldon on 3/1/2016.
  *
  * Represents members of congress.
  */
-class CongressPerson {
+public class CongressPerson implements Serializable {
     private String name;
     private URL siteURL;
     private String email;
     private String party;
     private String lastTweet;
     private String prefix;
+    private String endDate;
+    private ArrayList<String> committees;
+    private ArrayList<String> legislation;
     private int photoId;
 
     CongressPerson(String prefix,
@@ -22,6 +31,7 @@ class CongressPerson {
                    String email,
                    String party,
                    String lastTweet,
+                   String endDate,
                    int photoId) {
         this.prefix = prefix;
         this.name = name;
@@ -29,13 +39,39 @@ class CongressPerson {
         this.email = email;
         this.party = party;
         this.lastTweet = lastTweet;
+        this.endDate = endDate;
         this.photoId = photoId;
     }
 
+    /* Setters  */
+
+    public void setLegislation(ArrayList<String> legislation) {
+        this.legislation = legislation;
+    }
+
+    public void setCommittees(ArrayList<String> committees) {
+        this.committees = committees;
+    }
+
+
     /* Getters for private fields */
 
+    public String getCommittees() {
+        if (this.committees != null) {
+            return TextUtils.join("\n", this.committees);
+        }
+        return "";
+    }
+
+    public String getLegislation() {
+        if (this.committees != null) {
+            return TextUtils.join("\n", this.legislation);
+        }
+        return "";
+    }
+
     public String getName() {
-        return this.name;
+        return this.prefix + " " + this.name;
     }
 
     public String getWebsite() {
@@ -63,5 +99,9 @@ class CongressPerson {
 
     public int getPhotoID() {
         return this.photoId;
+    }
+
+    public String getEndDate() {
+        return this.endDate;
     }
 }

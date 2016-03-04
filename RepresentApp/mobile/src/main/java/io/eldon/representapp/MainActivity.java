@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private Button mSubmitZipBtn;
-    private Button mMyLocationBtn;
+    private Button mMyLocationBtn;  //TODO do something about this for part c
     private TextView mZIPEntry;
 
     @Override
@@ -25,8 +25,10 @@ public class MainActivity extends AppCompatActivity {
         mSubmitZipBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, CongressionalActivity.class);
+                myIntent.putExtra("zip", mZIPEntry.getText().toString());
                 MainActivity.this.startActivity(myIntent);
             }
         });
+
     }
 }
