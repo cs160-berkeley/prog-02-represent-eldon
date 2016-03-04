@@ -31,23 +31,19 @@ public class CongressionalActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_congressional);
-        RecyclerView mSenatorsView = (RecyclerView) findViewById(R.id.congresspeople_view);
+        RecyclerView mCongressPersonsView = (RecyclerView) findViewById(R.id.congresspeople_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mSenatorsView.setHasFixedSize(true);  //TODO might need to delete, probably not though
+        mCongressPersonsView.setHasFixedSize(true);  //TODO might need to delete, probably not though
 
         // use a linear layout manager
-//        final LinearLayoutManager senatorLayoutManager = new LinearLayoutManager(this);
-//        senatorLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        mSenatorsView.setLayoutManager(senatorLayoutManager);
-
-        mSenatorsView.setLayoutManager(new LinearLayoutManager(this));
+        mCongressPersonsView.setLayoutManager(new LinearLayoutManager(this));
 
 
         // specify an adapter (see also next example)
         RecyclerView.Adapter mSenatorsAdapter = new CongressPersonAdapter(testingSenatorData()); //TODO replace with API data
-        mSenatorsView.setAdapter(mSenatorsAdapter);
+        mCongressPersonsView.setAdapter(mSenatorsAdapter);
     }
 
 
