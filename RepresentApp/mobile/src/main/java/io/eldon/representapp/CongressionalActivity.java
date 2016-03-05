@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,16 +18,27 @@ import java.util.List;
 
 public class CongressionalActivity extends AppCompatActivity {
     private String mZIPCode;
+    private List<CongressPerson> congressPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        congressPeople = testingSenatorData();  //TODO replace with API data
+
         mZIPCode = getIntent().getExtras().getString("zip");
-        Log.e("mZIPCode is now:", mZIPCode);
         if (! mZIPCode.isEmpty()) {
             setTitle("Members of Congress for " + mZIPCode);
         } else {
             setTitle("Members of Congress");
+        }
+
+        String congressPersonID = getIntent().getExtras().getString("selectCongressPerson");
+        if (! congressPersonID.isEmpty()) {
+            Integer congressPersonIndex = Integer.parseInt(congressPersonID);
+            Intent getDetailIntent = new Intent(this, DetailActivity.class);
+            getDetailIntent.putExtra("congressperson", congressPeople.get(congressPersonIndex));
+            startActivity(getDetailIntent);
         }
 
         setContentView(R.layout.activity_congressional);
@@ -41,13 +51,15 @@ public class CongressionalActivity extends AppCompatActivity {
         // use a linear layout manager
         mCongressPersonsView.setLayoutManager(new LinearLayoutManager(this));
 
-
         // specify an adapter (see also next example)
-        RecyclerView.Adapter mSenatorsAdapter = new CongressPersonAdapter(testingSenatorData()); //TODO replace with API data
+        RecyclerView.Adapter mSenatorsAdapter = new CongressPersonAdapter(this.congressPeople);
 
         // Send data to the watch
         Intent sendIntent = new Intent(getBaseContext(), PhoneToWatchService.class);
-        sendIntent.putExtra("wearSerializedData", getWearSerializedData("Alameda, CA", new Float(60.3), new Float(39.1), testingSenatorData()));
+        sendIntent.putExtra(
+                "wearSerializedData",
+                getWearSerializedData("Alameda, CA", new Float(60.3), new Float(39.1), this.congressPeople)
+        );
         startService(sendIntent);
 
         // Show the view on the phone
@@ -64,7 +76,26 @@ public class CongressionalActivity extends AppCompatActivity {
         return retval;
     }
 
-    List<CongressPerson> testingSenatorData(){
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putString("zip", mZIPCode);
+        savedInstanceState.putSerializable("congresspeople", new ArrayList<CongressPerson>(congressPeople));
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        mZIPCode = savedInstanceState.getString("zip");
+        congressPeople = (ArrayList<CongressPerson>) savedInstanceState.getSerializable("congresspeople");
+    }
+
+    static List<CongressPerson> testingSenatorData(){
         List<CongressPerson> persons = new ArrayList<CongressPerson>();
         try {
             persons.add(new CongressPerson("Sen.",

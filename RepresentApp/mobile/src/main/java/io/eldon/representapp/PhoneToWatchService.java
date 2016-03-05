@@ -49,6 +49,7 @@ public class PhoneToWatchService extends Service {
         Bundle extras = intent.getExtras();
         final String wearSerializedData = extras.getString("wearSerializedData");
 
+
         // Send the message with the cat name
         new Thread(new Runnable() {
             @Override

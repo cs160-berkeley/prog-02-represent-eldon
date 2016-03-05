@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:gravity="center" android:layout_gravity="center"
-    tools:context=".MainActivity" android:orientation="vertical" tools:deviceIds="wear_round">
+    tools:context=".MainActivity" android:orientation="vertical" tools:deviceIds="wear_round"
+    android:id="@+id/container">
 
     <TextView
         android:layout_width="wrap_content"
@@ -18,6 +19,14 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/person_party"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/clock"
         android:layout_gravity="center_horizontal" />
 
 
