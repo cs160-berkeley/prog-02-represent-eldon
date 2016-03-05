@@ -1,5 +1,6 @@
 package io.eldon.representapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,9 +44,25 @@ public class CongressionalActivity extends AppCompatActivity {
 
         // specify an adapter (see also next example)
         RecyclerView.Adapter mSenatorsAdapter = new CongressPersonAdapter(testingSenatorData()); //TODO replace with API data
+
+        // Send data to the watch
+        Intent sendIntent = new Intent(getBaseContext(), PhoneToWatchService.class);
+        sendIntent.putExtra("wearSerializedData", getWearSerializedData("Alameda, CA", new Float(60.3), new Float(39.1), testingSenatorData()));
+        startService(sendIntent);
+
+        // Show the view on the phone
         mCongressPersonsView.setAdapter(mSenatorsAdapter);
     }
 
+    private String getWearSerializedData(String countyState, Float obamaPrc, Float romneyPrc, List<CongressPerson> congressPeople) {
+        String retval = countyState + "\n";
+        retval += obamaPrc.toString() + "\n";
+        retval += romneyPrc.toString() + "\n";
+        for (CongressPerson cp : congressPeople) {  // lol
+            retval += cp.getWearSerializedString() + "\n";
+        }
+        return retval;
+    }
 
     List<CongressPerson> testingSenatorData(){
         List<CongressPerson> persons = new ArrayList<CongressPerson>();

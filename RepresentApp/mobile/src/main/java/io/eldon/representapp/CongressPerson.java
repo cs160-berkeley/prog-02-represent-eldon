@@ -4,9 +4,7 @@ import android.text.TextUtils;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by eldon on 3/1/2016.
@@ -55,6 +53,10 @@ public class CongressPerson implements Serializable {
 
 
     /* Getters for private fields */
+
+    public String getWearSerializedString() {
+        return this.name + "," + this.party;
+    }
 
     public String getCommittees() {
         if (this.committees != null) {

@@ -69,6 +69,7 @@ public class CongressPersonAdapter extends RecyclerView.Adapter<CongressPersonAd
                 v.getContext().startActivity(getDetailIntent);
             }
         });
+
     }
 
     @Override
