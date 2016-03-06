@@ -18,15 +18,19 @@ import java.util.List;
 
 public class CongressionalActivity extends AppCompatActivity {
     private String mZIPCode;
+    private String mCounty;
+    private Float mObamaVote;
+    private Float mRomneyVote;
     private List<CongressPerson> congressPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mZIPCode = getIntent().getExtras().getString("zip");
+
         congressPeople = testingSenatorData();  //TODO replace with API data
 
-        mZIPCode = getIntent().getExtras().getString("zip");
         if (! mZIPCode.isEmpty()) {
             setTitle("Members of Congress for " + mZIPCode);
         } else {
@@ -58,7 +62,7 @@ public class CongressionalActivity extends AppCompatActivity {
         Intent sendIntent = new Intent(getBaseContext(), PhoneToWatchService.class);
         sendIntent.putExtra(
                 "wearSerializedData",
-                getWearSerializedData("Alameda, CA", new Float(60.3), new Float(39.1), this.congressPeople)
+                getWearSerializedData(mCounty, mObamaVote, mRomneyVote, this.congressPeople)
         );
         startService(sendIntent);
 
@@ -76,26 +80,26 @@ public class CongressionalActivity extends AppCompatActivity {
         return retval;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
-        savedInstanceState.putString("zip", mZIPCode);
-        savedInstanceState.putSerializable("congresspeople", new ArrayList<CongressPerson>(congressPeople));
-    }
+//    @Override
+//    public void onSaveInstanceState(Bundle savedInstanceState) {
+//        super.onSaveInstanceState(savedInstanceState);
+//        // Save UI state changes to the savedInstanceState.
+//        // This bundle will be passed to onCreate if the process is
+//        // killed and restarted.
+//        savedInstanceState.putString("zip", mZIPCode);
+//        savedInstanceState.putSerializable("congresspeople", new ArrayList<CongressPerson>(congressPeople));
+//    }
+//
+//    @Override
+//    public void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        // Restore UI state from the savedInstanceState.
+//        // This bundle has also been passed to onCreate.
+//        mZIPCode = savedInstanceState.getString("zip");
+//        congressPeople = (ArrayList<CongressPerson>) savedInstanceState.getSerializable("congresspeople");
+//    }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        // Restore UI state from the savedInstanceState.
-        // This bundle has also been passed to onCreate.
-        mZIPCode = savedInstanceState.getString("zip");
-        congressPeople = (ArrayList<CongressPerson>) savedInstanceState.getSerializable("congresspeople");
-    }
-
-    static List<CongressPerson> testingSenatorData(){
+    List<CongressPerson> testingSenatorData(){
         List<CongressPerson> persons = new ArrayList<CongressPerson>();
         try {
             persons.add(new CongressPerson("Sen.",
@@ -117,7 +121,7 @@ public class CongressionalActivity extends AppCompatActivity {
             );
             persons.get(0).setLegislation(
                     new ArrayList<String>(Arrays.asList(
-                            new String[] {
+                            new String[]{
                                     "Child Nicotine Poisoning Prevention Act of 2015",
                                     "Breast Cancer Research Stamp Reauthorization Act of 2015",
                                     "Adoptive Family Relief Act"
@@ -132,15 +136,34 @@ public class CongressionalActivity extends AppCompatActivity {
                     "11/8/2016",
                     R.drawable.feinstein
             ));
-            persons.add(new CongressPerson("Rep.",
-                    "Barbara Lee",
-                    new URL("http://lee.house.gov"),
-                    "Email",
-                    "Democrat",
-                    "@RepBarbaraLee I ran out of clever ideas for tweet test data.",
-                    "11/8/2016",
-                    R.drawable.lee
-            ));
+            if (mZIPCode.equalsIgnoreCase("91325")) {
+                persons.add(new CongressPerson(
+                        "Rep.",
+                        "Brad Sherman",
+                        new URL("http://sherman.house.gov"),
+                        "Email",
+                        "Democrat",
+                        "@BradSherman This morning I testified before the House @Transport Committee on Gas Storage Legislation",
+                        "11/8/2016",
+                        R.drawable.sherman
+                ));
+                mObamaVote = new Float(60.1);
+                mRomneyVote = new Float(30.7);
+                mCounty = "Los Angeles, CA";
+            } else {
+                persons.add(new CongressPerson("Rep.",
+                        "Barbara Lee",
+                        new URL("http://lee.house.gov"),
+                        "Email",
+                        "Democrat",
+                        "@RepBarbaraLee I ran out of clever ideas for tweet test data.",
+                        "11/8/2016",
+                        R.drawable.lee
+                ));
+                mObamaVote = new Float(84.6);
+                mRomneyVote = new Float(12.9);
+                mCounty = "Alameda, CA";
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

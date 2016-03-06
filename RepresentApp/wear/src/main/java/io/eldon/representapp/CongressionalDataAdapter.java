@@ -38,12 +38,8 @@ public class CongressionalDataAdapter extends FragmentGridPagerAdapter {
             mPageData.add(new PageData(cp.getName(), cp.getParty(), cp.getPartyColor(), cp));
         }
 
-        mPageData.add(new PageData(mCountyState, "2012 Presidential Vote", "#FAFAFA", null));  // lol
-        if (Float.parseFloat(mObamaVote) >= Float.parseFloat(mRomneyVote)) {
-            mPageData.add(new PageData("Obama: " + mObamaVote + "\nRomney: " + mRomneyVote, "", "#02bfe7", null));  // lol
-        } else {
-            mPageData.add(new PageData("Obama: " + mObamaVote + "\nRomney: " + mRomneyVote, "", "#e31c3d", null));  // lol
-        }
+        mPageData.add(new PageData(mCountyState, "2012 Presidential Vote\n" +
+                "Obama: " + mObamaVote + "\nRomney: " + mRomneyVote, "#FAFAFA", null));  // lol
     }
 
     // Override methods in FragmentGridPagerAdapter
