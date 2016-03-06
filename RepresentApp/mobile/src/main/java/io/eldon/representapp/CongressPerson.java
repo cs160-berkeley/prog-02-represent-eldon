@@ -55,7 +55,7 @@ public class CongressPerson implements Serializable {
     /* Getters for private fields */
 
     public String getWearSerializedString() {
-        return this.name + "," + this.party;
+        return this.getName() + "," + this.getParty();
     }
 
     public String getCommittees() {

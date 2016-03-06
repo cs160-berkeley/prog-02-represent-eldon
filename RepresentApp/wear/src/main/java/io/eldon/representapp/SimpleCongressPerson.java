@@ -23,6 +23,16 @@ public class SimpleCongressPerson implements Serializable {
         this.id = id;
     }
 
+    public String getPartyColor() {
+        if (this.party.equalsIgnoreCase("Democrat")) {
+            return "#02bfe7";
+        } else if (this.party.equalsIgnoreCase("Republican")) {
+            return "#e31c3d";
+        } else {
+            return "#F1F1F1";
+        }
+    }
+
     public String getName() {
         return name;
     }

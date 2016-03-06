@@ -34,7 +34,7 @@ public class CongressionalActivity extends AppCompatActivity {
         }
 
         String congressPersonID = getIntent().getExtras().getString("selectCongressPerson");
-        if (! congressPersonID.isEmpty()) {
+        if (congressPersonID != null && ! congressPersonID.isEmpty()) {
             Integer congressPersonIndex = Integer.parseInt(congressPersonID);
             Intent getDetailIntent = new Intent(this, DetailActivity.class);
             getDetailIntent.putExtra("congressperson", congressPeople.get(congressPersonIndex));

@@ -6,7 +6,6 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 /**
  * Stolen by eldon on 3/3/2016.
@@ -24,25 +23,16 @@ public class WatchListenerService extends WearableListenerService {
             String value = new String(messageEvent.getData(), StandardCharsets.UTF_8);
             String[] parsedData = value.split("\n", 4);  // ["County, State", obamaPrc, romneyPRC, [congresspeople]]
 
-            Intent intent = new Intent(this, MainActivity.class );
+            Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("countyState", parsedData[0]);
             intent.putExtra("obamaVote", parsedData[1]);
             intent.putExtra("romneyVote", parsedData[2]);
-            intent.putExtra("packedCongressPeople", parseCongressPeople(parsedData[3]));
+            intent.putExtra("packedCongressPeople", parsedData[3]);
             startActivity(intent);
         } else {
             super.onMessageReceived( messageEvent );
         }
 
-    }
-
-    public ArrayList<SimpleCongressPerson> parseCongressPeople(String packedCongressPeople) {
-        ArrayList<SimpleCongressPerson> cps = new ArrayList<SimpleCongressPerson>();
-        String[] congressPeople = packedCongressPeople.split("\n");  // split into serialized SimpleCongressPersons
-        for (int i = 0; i < congressPeople.length; i++) {  // unpack into SimpleCongressPerson objects
-            cps.add(new SimpleCongressPerson(congressPeople[i], i));
-        }
-        return cps;
     }
 }
