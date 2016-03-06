@@ -2,14 +2,14 @@ package io.eldon.representapp;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.wearable.view.WatchViewStub;
-import android.widget.TextView;
+import android.support.wearable.view.DotsPageIndicator;
+import android.support.wearable.view.GridViewPager;
 
 import java.util.ArrayList;
 
 public class CongressionalActivity extends Activity {
 
-    private TextView mTextView;
+
     private ArrayList<SimpleCongressPerson> mCongressPeople;
     private String mCountyState;
     private String mObamaVote;
@@ -29,16 +29,20 @@ public class CongressionalActivity extends Activity {
             mRomneyVote = extras.getString("romneyVote");
         }
 
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
-            }
-        });
+        final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
+        pager.setAdapter(new CongressionalDataAdapter(getBaseContext(),
+                getFragmentManager(),
+                mCongressPeople,
+                mCountyState,
+                mObamaVote,
+                mRomneyVote
+        ));
+        DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
+        dotsPageIndicator.setPager(pager);
+
     }
 
-    private ArrayList<SimpleCongressPerson> parseCongressPeople(String wearSerializedString) {
+        private ArrayList<SimpleCongressPerson> parseCongressPeople(String wearSerializedString) {
         String[] serializedCongressPeople = wearSerializedString.split("\n");
         ArrayList<SimpleCongressPerson> congressPeople = new ArrayList<SimpleCongressPerson>();
         for (int i = 0; i < serializedCongressPeople.length; i++) {
@@ -68,7 +72,6 @@ public class CongressionalActivity extends Activity {
         mCountyState = savedInstanceState.getString("countyState");
         mObamaVote = savedInstanceState.getString("obamaVote");
         mRomneyVote = savedInstanceState.getString("romneyVote");
-
     }
 
 }

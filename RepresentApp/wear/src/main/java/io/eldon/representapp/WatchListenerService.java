@@ -23,7 +23,7 @@ public class WatchListenerService extends WearableListenerService {
             String value = new String(messageEvent.getData(), StandardCharsets.UTF_8);
             String[] parsedData = value.split("\n", 4);  // ["County, State", obamaPrc, romneyPRC, [congresspeople]]
 
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, CongressionalActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("countyState", parsedData[0]);
             intent.putExtra("obamaVote", parsedData[1]);
