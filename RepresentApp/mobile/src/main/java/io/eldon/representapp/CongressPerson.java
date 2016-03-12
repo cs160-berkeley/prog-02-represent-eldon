@@ -2,7 +2,13 @@ package io.eldon.representapp;
 
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -16,7 +22,7 @@ public class CongressPerson implements Serializable {
     private URL siteURL;
     private String email;
     private String party;
-    private String lastTweet;
+    private String twitterID;
     private String prefix;
     private String endDate;
     private ArrayList<String> committees;
@@ -28,7 +34,7 @@ public class CongressPerson implements Serializable {
                    URL url,
                    String email,
                    String party,
-                   String lastTweet,
+                   String twitterID,
                    String endDate,
                    int photoId) {
         this.prefix = prefix;
@@ -36,9 +42,36 @@ public class CongressPerson implements Serializable {
         this.siteURL = url;
         this.email = email;
         this.party = party;
-        this.lastTweet = lastTweet;
+        this.twitterID = twitterID;
         this.endDate = endDate;
         this.photoId = photoId;
+    }
+
+    public static ArrayList<CongressPerson> getFromSunlightData(String response) {
+        try {
+            JSONObject j = (JSONObject) new JSONTokener(response).nextValue();
+            JSONArray results = j.getJSONArray("results");
+            ArrayList<CongressPerson> cp = new ArrayList<>();
+            for (int i = 0; i < results.length(); i++) {
+                j = results.getJSONObject(i);
+                cp.add(new CongressPerson(
+                        j.getString("title") + ".",
+                        j.getString("first_name") + " " + j.getString("last_name"),
+                        new URL(j.getString("website")),
+                        j.getString("oc_email"),
+                        j.getString("party").equalsIgnoreCase("D") ? "Democrat" : j.getString("party").equalsIgnoreCase("R") ? "Republican" : j.getString("party"),
+                        j.getString("twitter_id"),
+                        j.getString("term_end"),
+                        0
+                ));
+            }
+            return cp;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     /* Setters  */
@@ -89,14 +122,14 @@ public class CongressPerson implements Serializable {
     }
 
     public String getTruncatedLastTweet() {
-        if (this.lastTweet.length() >= 50) {
-            return this.lastTweet.substring(0, this.lastTweet.substring(0, 46).lastIndexOf(" ")) + " [...]";
+        if (this.twitterID.length() >= 50) {
+            return this.twitterID.substring(0, this.twitterID.substring(0, 46).lastIndexOf(" ")) + " [...]";
         }
-        return this.lastTweet;
+        return this.twitterID;
     }
 
-    public String getLastTweet() {
-        return this.lastTweet;
+    public String getTwitterID() {
+        return this.twitterID;
     }
 
     public int getPhotoID() {

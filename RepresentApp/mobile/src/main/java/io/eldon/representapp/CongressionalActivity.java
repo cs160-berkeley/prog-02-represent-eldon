@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,7 +24,7 @@ public class CongressionalActivity extends AppCompatActivity {
     private String mCounty;
     private Float mObamaVote;
     private Float mRomneyVote;
-    private List<CongressPerson> congressPeople;
+    private List<CongressPerson> mCongressPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,23 +34,31 @@ public class CongressionalActivity extends AppCompatActivity {
 
         mZIPCode = extras.getString("zip");
         mLastLocation = extras.getParcelable("locationParcel");
-        congressPeople = testingSenatorData();  //TODO replace with API data
+
+        //TODO testing only lol
+        mObamaVote = new Float(60.1);
+        mRomneyVote = new Float(30.7);
+        mCounty = "Los Angeles, CA";
+
 
         if (! mZIPCode.isEmpty()) {
             setTitle("Members of Congress for " + mZIPCode);
             //TODO get congresspeople for this zip code
+            mCongressPeople = getCongressPeopleForZip(mZIPCode);
         } else if (mLastLocation != null) {
             //TODO get congresspeople for these coordinates
             setTitle("Members of Congress for " + mLastLocation.getLongitude() + ", " + mLastLocation.getLatitude());
+            mCongressPeople = getCongressPeopleForLocation(mLastLocation);
         } else {
             setTitle("Members of Congress");
+            mCongressPeople = testingSenatorData();  // derp
         }
 
         String congressPersonID = extras.getString("selectCongressPerson");
         if (congressPersonID != null && ! congressPersonID.isEmpty()) {
             Integer congressPersonIndex = Integer.parseInt(congressPersonID);
             Intent getDetailIntent = new Intent(this, DetailActivity.class);
-            getDetailIntent.putExtra("congressperson", congressPeople.get(congressPersonIndex));
+            getDetailIntent.putExtra("congressperson", mCongressPeople.get(congressPersonIndex));
             startActivity(getDetailIntent);
         }
 
@@ -64,13 +73,13 @@ public class CongressionalActivity extends AppCompatActivity {
         mCongressPersonsView.setLayoutManager(new LinearLayoutManager(this));
 
         // specify an adapter (see also next example)
-        RecyclerView.Adapter mSenatorsAdapter = new CongressPersonAdapter(this.congressPeople);
+        RecyclerView.Adapter mSenatorsAdapter = new CongressPersonAdapter(this.mCongressPeople);
 
         // Send data to the watch
         Intent sendIntent = new Intent(getBaseContext(), PhoneToWatchService.class);
         sendIntent.putExtra(
                 "wearSerializedData",
-                getWearSerializedData(mCounty, mObamaVote, mRomneyVote, this.congressPeople)
+                getWearSerializedData(mCounty, mObamaVote, mRomneyVote, this.mCongressPeople)
         );
         startService(sendIntent);
 
@@ -96,7 +105,7 @@ public class CongressionalActivity extends AppCompatActivity {
         // killed and restarted.
         savedInstanceState.putString("zip", mZIPCode);
         savedInstanceState.putParcelable("locationParcel", mLastLocation);
-        savedInstanceState.putSerializable("congresspeople", new ArrayList<CongressPerson>(congressPeople));
+        savedInstanceState.putSerializable("congresspeople", new ArrayList<CongressPerson>(mCongressPeople));
     }
 
     @Override
@@ -106,10 +115,41 @@ public class CongressionalActivity extends AppCompatActivity {
         // This bundle has also been passed to onCreate.
         mZIPCode = savedInstanceState.getString("zip");
         mLastLocation = savedInstanceState.getParcelable("locationParcel");
-        congressPeople = (ArrayList<CongressPerson>) savedInstanceState.getSerializable("congresspeople");
+        mCongressPeople = (ArrayList<CongressPerson>) savedInstanceState.getSerializable("congresspeople");
     }
 
-    List<CongressPerson> testingSenatorData(){
+    private List<CongressPerson> getCongressPeopleForLocation(Location l) {
+        double lat = l.getLatitude();
+        double lon = l.getLongitude();
+        String s = "http://congress.api.sunlightfoundation.com/legislators/locate?latitude=" + lat
+                + "&longitude=" + lon
+                + "&apikey=" + getApplicationContext().getResources().getText(R.string.sunlight_api_key
+        );
+        ApiQueryWrapper a = new ApiQueryWrapper(s);
+        String result = "";
+        try {
+            result = a.execute().get();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+        }
+        return CongressPerson.getFromSunlightData(result);
+    }
+
+    private List<CongressPerson> getCongressPeopleForZip(String z) {
+        String s = "http://congress.api.sunlightfoundation.com/legislators/locate?zip=" + mZIPCode
+                + "&apikey=" + getApplicationContext().getResources().getText(R.string.sunlight_api_key
+        );
+        ApiQueryWrapper a = new ApiQueryWrapper(s);
+        String result = "";
+        try {
+            result = a.execute().get();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+        }
+        return CongressPerson.getFromSunlightData(result);
+    }
+
+    private List<CongressPerson> testingSenatorData(){
         List<CongressPerson> persons = new ArrayList<CongressPerson>();
         try {
             persons.add(new CongressPerson("Sen.",
