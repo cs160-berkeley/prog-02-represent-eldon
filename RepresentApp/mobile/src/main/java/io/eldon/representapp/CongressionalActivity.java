@@ -1,6 +1,7 @@
 package io.eldon.representapp;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class CongressionalActivity extends AppCompatActivity {
     private String mZIPCode;
+    private Location mLastLocation;
     private String mCounty;
     private Float mObamaVote;
     private Float mRomneyVote;
@@ -27,17 +29,23 @@ public class CongressionalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mZIPCode = getIntent().getExtras().getString("zip");
+        Bundle extras = getIntent().getExtras();
 
+        mZIPCode = extras.getString("zip");
+        mLastLocation = extras.getParcelable("locationParcel");
         congressPeople = testingSenatorData();  //TODO replace with API data
 
         if (! mZIPCode.isEmpty()) {
             setTitle("Members of Congress for " + mZIPCode);
+            //TODO get congresspeople for this zip code
+        } else if (mLastLocation != null) {
+            //TODO get congresspeople for these coordinates
+            setTitle("Members of Congress for " + mLastLocation.getLongitude() + ", " + mLastLocation.getLatitude());
         } else {
             setTitle("Members of Congress");
         }
 
-        String congressPersonID = getIntent().getExtras().getString("selectCongressPerson");
+        String congressPersonID = extras.getString("selectCongressPerson");
         if (congressPersonID != null && ! congressPersonID.isEmpty()) {
             Integer congressPersonIndex = Integer.parseInt(congressPersonID);
             Intent getDetailIntent = new Intent(this, DetailActivity.class);
@@ -80,24 +88,26 @@ public class CongressionalActivity extends AppCompatActivity {
         return retval;
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle savedInstanceState) {
-//        super.onSaveInstanceState(savedInstanceState);
-//        // Save UI state changes to the savedInstanceState.
-//        // This bundle will be passed to onCreate if the process is
-//        // killed and restarted.
-//        savedInstanceState.putString("zip", mZIPCode);
-//        savedInstanceState.putSerializable("congresspeople", new ArrayList<CongressPerson>(congressPeople));
-//    }
-//
-//    @Override
-//    public void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        // Restore UI state from the savedInstanceState.
-//        // This bundle has also been passed to onCreate.
-//        mZIPCode = savedInstanceState.getString("zip");
-//        congressPeople = (ArrayList<CongressPerson>) savedInstanceState.getSerializable("congresspeople");
-//    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putString("zip", mZIPCode);
+        savedInstanceState.putParcelable("locationParcel", mLastLocation);
+        savedInstanceState.putSerializable("congresspeople", new ArrayList<CongressPerson>(congressPeople));
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        mZIPCode = savedInstanceState.getString("zip");
+        mLastLocation = savedInstanceState.getParcelable("locationParcel");
+        congressPeople = (ArrayList<CongressPerson>) savedInstanceState.getSerializable("congresspeople");
+    }
 
     List<CongressPerson> testingSenatorData(){
         List<CongressPerson> persons = new ArrayList<CongressPerson>();
@@ -136,7 +146,7 @@ public class CongressionalActivity extends AppCompatActivity {
                     "11/8/2016",
                     R.drawable.feinstein
             ));
-            if (mZIPCode.equalsIgnoreCase("91325")) {
+            if (mZIPCode != null && mZIPCode.equalsIgnoreCase("91325")) {
                 persons.add(new CongressPerson(
                         "Rep.",
                         "Brad Sherman",
