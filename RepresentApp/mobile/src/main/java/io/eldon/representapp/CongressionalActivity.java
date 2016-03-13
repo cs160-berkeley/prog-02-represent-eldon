@@ -1,6 +1,8 @@
 package io.eldon.representapp;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,11 +10,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /*
  * Moves congressperson data into the Congressional View.
@@ -22,38 +27,67 @@ public class CongressionalActivity extends AppCompatActivity {
     private String mZIPCode;
     private Location mLastLocation;
     private String mCounty;
-    private Float mObamaVote;
-    private Float mRomneyVote;
+    private String mObamaVote;
+    private String mRomneyVote;
     private List<CongressPerson> mCongressPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Members of Congress");
 
         Bundle extras = getIntent().getExtras();
-
         mZIPCode = extras.getString("zip");
         mLastLocation = extras.getParcelable("locationParcel");
 
         //TODO testing only lol
-        mObamaVote = new Float(60.1);
-        mRomneyVote = new Float(30.7);
-        mCounty = "Los Angeles, CA";
+        mObamaVote = "99.9%";
+        mRomneyVote = "99.9%";
 
+        Geocoder geocoder;
+        List<Address> addresses = new ArrayList<>();
+        geocoder = new Geocoder(this, Locale.getDefault());
 
         if (! mZIPCode.isEmpty()) {
-            setTitle("Members of Congress for " + mZIPCode);
             //TODO get congresspeople for this zip code
+            try {
+                addresses = geocoder.getFromLocationName(mZIPCode, 1);
+                mLastLocation = new Location("user input");
+                mLastLocation.setLatitude(addresses.get(0).getLatitude());
+                mLastLocation.setLongitude(addresses.get(0).getLongitude());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             mCongressPeople = getCongressPeopleForZip(mZIPCode);
         } else if (mLastLocation != null) {
             //TODO get congresspeople for these coordinates
-            setTitle("Members of Congress for " + mLastLocation.getLongitude() + ", " + mLastLocation.getLatitude());
             mCongressPeople = getCongressPeopleForLocation(mLastLocation);
         } else {
-            setTitle("Members of Congress");
-            mCongressPeople = testingSenatorData();  // derp
+            // uh oh
         }
 
+        try {
+            addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (mZIPCode.isEmpty()) {
+            mZIPCode = addresses.get(0).getPostalCode();
+            mZIPCode = mZIPCode == null ? "" : mZIPCode;
+        }
+
+        String state = addresses.get(0).getAdminArea();
+        mCounty = getCountyStateFromCoordinates(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
+        ElectionResults electionResults = new ElectionResults(getApplicationContext());
+        String[] rawElectionResults = electionResults.getObamaRomneyResults(mCounty);
+        mObamaVote = rawElectionResults[0];
+        mRomneyVote = rawElectionResults[1];
+
+        Toast.makeText(this, mZIPCode + ", " + mCounty, Toast.LENGTH_LONG).show();
+
+        // Handle a selected congressperson from a wear app, the hacky way
         String congressPersonID = extras.getString("selectCongressPerson");
         if (congressPersonID != null && ! congressPersonID.isEmpty()) {
             Integer congressPersonIndex = Integer.parseInt(congressPersonID);
@@ -68,13 +102,10 @@ public class CongressionalActivity extends AppCompatActivity {
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mCongressPersonsView.setHasFixedSize(true);  //TODO might need to delete, probably not though
-
         // use a linear layout manager
         mCongressPersonsView.setLayoutManager(new LinearLayoutManager(this));
-
         // specify an adapter (see also next example)
         RecyclerView.Adapter mSenatorsAdapter = new CongressPersonAdapter(this.mCongressPeople);
-
         // Send data to the watch
         Intent sendIntent = new Intent(getBaseContext(), PhoneToWatchService.class);
         sendIntent.putExtra(
@@ -82,15 +113,14 @@ public class CongressionalActivity extends AppCompatActivity {
                 getWearSerializedData(mCounty, mObamaVote, mRomneyVote, this.mCongressPeople)
         );
         startService(sendIntent);
-
         // Show the view on the phone
         mCongressPersonsView.setAdapter(mSenatorsAdapter);
     }
 
-    private String getWearSerializedData(String countyState, Float obamaPrc, Float romneyPrc, List<CongressPerson> congressPeople) {
+    private String getWearSerializedData(String countyState, String obamaPrc, String romneyPrc, List<CongressPerson> congressPeople) {
         String retval = countyState + "\n";
-        retval += obamaPrc.toString() + "\n";
-        retval += romneyPrc.toString() + "\n";
+        retval += obamaPrc + "\n";
+        retval += romneyPrc + "\n";
         for (CongressPerson cp : congressPeople) {  // lol
             retval += cp.getWearSerializedString() + "\n";
         }
@@ -149,6 +179,39 @@ public class CongressionalActivity extends AppCompatActivity {
         return CongressPerson.getFromSunlightData(result);
     }
 
+    private String getCountyStateFromCoordinates(double lat, double lon) {
+        String s = "https://maps.googleapis.com/maps/api/geocode/json?"
+        + "latlng=" + lat + "," + lon
+        + "&result_type=administrative_area_level_2"
+        + "&key=" + getResources().getString(R.string.google_maps_key);
+        ApiQueryWrapper a = new ApiQueryWrapper(s);
+        String result = "";
+        try {
+            result = a.execute().get();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+        }
+        String state = "";
+        String county = "";
+        try {
+            JSONObject j = (JSONObject) new JSONTokener(result).nextValue();
+            JSONArray ja = j.getJSONArray("results").getJSONObject(0).getJSONArray("address_components");
+
+            for (int i = 0; i < ja.length(); i++) {
+                j = ja.getJSONObject(i);
+                if (j.getJSONArray("types").toString().contains("administrative_area_level_2")) {
+                    county = j.getString("short_name");
+                } else if (j.getJSONArray("types").toString().contains("administrative_area_level_1")) {
+                    state = j.getString("short_name");
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG);
+        }
+        return county + ", " + state;
+    }
+
+    /*
     private List<CongressPerson> testingSenatorData(){
         List<CongressPerson> persons = new ArrayList<CongressPerson>();
         try {
@@ -216,4 +279,5 @@ public class CongressionalActivity extends AppCompatActivity {
         }
         return persons;
     }
+    */
 }

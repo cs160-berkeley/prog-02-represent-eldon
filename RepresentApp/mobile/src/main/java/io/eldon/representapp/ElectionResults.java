@@ -1,6 +1,6 @@
 package io.eldon.representapp;
 
-import android.app.Activity;
+import android.content.Context;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,19 +12,13 @@ import java.io.InputStream;
 /**
  * Created by eldon on 3/12/2016.
  */
-public class ElectionResults extends Activity {
+public class ElectionResults {
     private JSONObject mRawVotingData;
 
-    private static ElectionResults ourInstance = new ElectionResults();
-
-    public static ElectionResults getInstance() {
-        return ourInstance;
-    }
-
-    private ElectionResults() {
+    public ElectionResults(Context c) {
         String json = null;
         try {
-            InputStream is = getApplicationContext().getAssets().open("file_name.json");
+            InputStream is = c.getResources().openRawResource(R.raw.condensed_electioncounty2012);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);

@@ -60,7 +60,7 @@ public class CongressPerson implements Serializable {
                         j.getString("first_name") + " " + j.getString("last_name"),
                         new URL(j.getString("website")),
                         j.getString("oc_email"),
-                        j.getString("party").equalsIgnoreCase("D") ? "Democrat" : j.getString("party").equalsIgnoreCase("R") ? "Republican" : j.getString("party"),
+                        j.getString("party").equalsIgnoreCase("D") ? "Democrat" : j.getString("party").equalsIgnoreCase("R") ? "Republican" : "Independent",
                         j.getString("twitter_id"),
                         j.getString("term_end"),
                         j.getString("bioguide_id")
