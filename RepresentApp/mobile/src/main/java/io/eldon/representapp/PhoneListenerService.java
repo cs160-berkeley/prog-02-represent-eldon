@@ -26,8 +26,8 @@ public class PhoneListenerService extends WearableListenerService {
 
         if (messageEvent.getPath().equalsIgnoreCase(SELECT_CONGRESSPERSON)) {
             Intent sendIntent = new Intent(getBaseContext(), CongressionalActivity.class);
-            sendIntent.putExtra("selectCongressPerson", value);
             sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            sendIntent.putExtra("selectCongressPerson", value);
             startActivity(sendIntent);
         } else if (messageEvent.getPath().equalsIgnoreCase(NEW_ZIP)) {
             Intent myIntent = new Intent(getBaseContext(), CongressionalActivity.class);
