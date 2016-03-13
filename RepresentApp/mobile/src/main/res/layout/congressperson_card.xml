@@ -15,7 +15,7 @@
 
         <ImageView
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="122dp"
             android:id="@+id/person_photo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
@@ -50,6 +50,7 @@
             android:layout_toRightOf="@+id/person_photo"
             android:layout_below="@+id/person_party"
             android:text="boxer.senate.gov"
+            android:autoLink="web"
             android:layout_marginTop="4dp" />
 
         <TextView
@@ -59,15 +60,17 @@
             android:layout_toRightOf="@+id/person_photo"
             android:layout_below="@+id/person_website"
             android:text="Email"
+            android:autoLink="email"
             android:layout_marginTop="4dp"/>
 
-        <TextView
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/person_last_tweet"
             android:layout_below="@+id/person_photo"
             android:text="\@senatorBoxer Putting the country first means Obama [...]"
             android:layout_marginTop="6dp"/>
+            -->
 
     </RelativeLayout>
 

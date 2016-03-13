@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ public class CongressPersonAdapter extends RecyclerView.Adapter<CongressPersonAd
         TextView personName;
         TextView personWebsite;
         TextView personEmail;
+        TextView personParty;
         TextView personLastTweet;
         ImageView personPhoto;
 
@@ -33,8 +36,10 @@ public class CongressPersonAdapter extends RecyclerView.Adapter<CongressPersonAd
             personName = (TextView)itemView.findViewById(R.id.person_name);
             personWebsite = (TextView)itemView.findViewById(R.id.person_website);
             personEmail = (TextView)itemView.findViewById(R.id.person_email);
-            personLastTweet = (TextView)itemView.findViewById(R.id.person_last_tweet);
+            //personLastTweet = (TextView)itemView.findViewById(R.id.person_last_tweet);
             personPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
+            personParty = (TextView)itemView.findViewById(R.id.person_party);
+
         }
     }
 
@@ -59,8 +64,14 @@ public class CongressPersonAdapter extends RecyclerView.Adapter<CongressPersonAd
         congressPersonViewHolder.personName.setText(persons.get(i).getName());
         congressPersonViewHolder.personWebsite.setText(persons.get(i).getWebsite());
         congressPersonViewHolder.personEmail.setText(persons.get(i).getEmail());
-        congressPersonViewHolder.personLastTweet.setText(persons.get(i).getTruncatedLastTweet());
-        congressPersonViewHolder.personPhoto.setImageResource(persons.get(i).getPhotoID());
+        congressPersonViewHolder.personParty.setText(persons.get(i).getParty());
+        //congressPersonViewHolder.personLastTweet.setText(persons.get(i).getTruncatedLastTweet());
+        //congressPersonViewHolder.personPhoto.setImageResource(persons.get(i).getPhotoID());
+        Picasso.with(congressPersonViewHolder.cv.getContext()).load(
+                "https://theunitedstates.io/images/congress/225x275/"
+                        + persons.get(i).getBioguideID()
+                        + ".jpg").into(congressPersonViewHolder.personPhoto
+        );
         congressPersonViewHolder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

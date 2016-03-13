@@ -159,7 +159,7 @@ public class CongressionalActivity extends AppCompatActivity {
                     "Democrat",
                     "@SenatorBoxer I'm going to write a bunch of words here to see if they're truncated properly.",
                     "11/8/2016",
-                    R.drawable.boxer
+                    "boxer"
             ));
             persons.get(0).setCommittees(
                     new ArrayList<String>(Arrays.asList(
@@ -184,8 +184,7 @@ public class CongressionalActivity extends AppCompatActivity {
                     "Democrat",
                     "@SenFeinstein I'll be on @NewsHour tonight to discuss things",
                     "11/8/2016",
-                    R.drawable.feinstein
-            ));
+                    "feinstein"));
             if (mZIPCode != null && mZIPCode.equalsIgnoreCase("91325")) {
                 persons.add(new CongressPerson(
                         "Rep.",
@@ -195,8 +194,7 @@ public class CongressionalActivity extends AppCompatActivity {
                         "Democrat",
                         "@BradSherman This morning I testified before the House @Transport Committee on Gas Storage Legislation",
                         "11/8/2016",
-                        R.drawable.sherman
-                ));
+                        "sherman"));
                 mObamaVote = new Float(60.1);
                 mRomneyVote = new Float(30.7);
                 mCounty = "Los Angeles, CA";
@@ -208,8 +206,7 @@ public class CongressionalActivity extends AppCompatActivity {
                         "Democrat",
                         "@RepBarbaraLee I ran out of clever ideas for tweet test data.",
                         "11/8/2016",
-                        R.drawable.lee
-                ));
+                        "lee"));
                 mObamaVote = new Float(84.6);
                 mRomneyVote = new Float(12.9);
                 mCounty = "Alameda, CA";

@@ -7,7 +7,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.eldon.representapp.DetailActivity">
+    android:background="#F1F1F1"
+    tools:context="io.eldon.representapp.DetailActivity"
+    >
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -28,7 +30,7 @@
 
                 <ImageView
                     android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="244dp"
                     android:id="@+id/person_photo"
                     android:src="@drawable/boxer"
                     android:scaleType="fitXY"
@@ -40,7 +42,7 @@
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/imageView2"
-                    android:src="@drawable/circle_mask"
+                    android:src="@drawable/oval_mask"
                     android:scaleType="fitXY"
                     android:adjustViewBounds="true"
                     android:layout_alignParentTop="true"

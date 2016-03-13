@@ -25,6 +25,7 @@ public class CongressPerson implements Serializable {
     private String twitterID;
     private String prefix;
     private String endDate;
+    private String bioguideID;
     private ArrayList<String> committees;
     private ArrayList<String> legislation;
     private int photoId;
@@ -36,7 +37,7 @@ public class CongressPerson implements Serializable {
                    String party,
                    String twitterID,
                    String endDate,
-                   int photoId) {
+                   String bioguideID) {
         this.prefix = prefix;
         this.name = name;
         this.siteURL = url;
@@ -44,7 +45,7 @@ public class CongressPerson implements Serializable {
         this.party = party;
         this.twitterID = twitterID;
         this.endDate = endDate;
-        this.photoId = photoId;
+        this.bioguideID = bioguideID;
     }
 
     public static ArrayList<CongressPerson> getFromSunlightData(String response) {
@@ -62,7 +63,7 @@ public class CongressPerson implements Serializable {
                         j.getString("party").equalsIgnoreCase("D") ? "Democrat" : j.getString("party").equalsIgnoreCase("R") ? "Republican" : j.getString("party"),
                         j.getString("twitter_id"),
                         j.getString("term_end"),
-                        0
+                        j.getString("bioguide_id")
                 ));
             }
             return cp;
@@ -132,8 +133,8 @@ public class CongressPerson implements Serializable {
         return this.twitterID;
     }
 
-    public int getPhotoID() {
-        return this.photoId;
+    public String getBioguideID() {
+        return this.bioguideID;
     }
 
     public String getEndDate() {

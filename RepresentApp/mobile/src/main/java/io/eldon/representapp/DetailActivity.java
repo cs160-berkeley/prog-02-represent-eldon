@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 public class DetailActivity extends AppCompatActivity {
     private CongressPerson mCongressPerson;
     private TextView mName;
@@ -33,7 +35,12 @@ public class DetailActivity extends AppCompatActivity {
         mEndDate.setText("Term ends " + mCongressPerson.getEndDate() + ".");
         mCommittees.setText(mCongressPerson.getCommittees());
         mLegislation.setText(mCongressPerson.getLegislation());
-        mPhotoID.setImageResource(mCongressPerson.getPhotoID());
+        //mPhotoID.setImageResource(mCongressPerson.getPhotoID());
+        Picasso.with(getApplicationContext()).load(
+                "https://theunitedstates.io/images/congress/225x275/"
+                        + mCongressPerson.getBioguideID()
+                        + ".jpg").into(mPhotoID
+        );
 
     }
 }
