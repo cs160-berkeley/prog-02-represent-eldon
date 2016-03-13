@@ -19,7 +19,7 @@ public class PhoneListenerService extends WearableListenerService {
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        Log.d("T", "in PhoneListenerService, got: " + messageEvent.getPath());
+        Log.d("T", "in PhoneListenerService, got: " + messageEvent.getPath() + " " + messageEvent.getData());
 
         // Value contains the String we sent over in WatchToPhoneService
         String value = new String(messageEvent.getData(), StandardCharsets.UTF_8);

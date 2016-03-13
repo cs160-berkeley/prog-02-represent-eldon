@@ -211,6 +211,8 @@ public class CongressionalActivity extends AppCompatActivity {
         return county + ", " + state;
     }
 
+
+
     /*
     private List<CongressPerson> testingSenatorData(){
         List<CongressPerson> persons = new ArrayList<CongressPerson>();
